@@ -1,4 +1,9 @@
 class GenericState
   constructor: (@id,@enteringConditions,@loopFunction) ->
 
-class 
+
+  executeState:(callback)->
+    @loopFunction()
+    callback()
+
+  testState: -> @enteringConditions()

@@ -8,13 +8,15 @@ GenericState = (function() {
     this.loopFunction = loopFunction;
   }
 
+  GenericState.prototype.executeState = function(callback) {
+    this.loopFunction();
+    return callback();
+  };
+
+  GenericState.prototype.testState = function() {
+    return this.enteringConditions();
+  };
+
   return GenericState;
-
-})();
-
-(function() {
-  function _Class() {}
-
-  return _Class;
 
 })();
