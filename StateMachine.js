@@ -3,12 +3,21 @@ var State, StateAction, StateMachine;
 
 StateMachine = (function() {
   function StateMachine(stateList) {
+    var base;
     this.stateList = stateList;
     this.currentState = this.stateList[0];
+    if (typeof (base = this.currentState).onEnter === "function") {
+      base.onEnter();
+    }
   }
 
   StateMachine.prototype.selectNextState = function() {
-    return this.currentState = this.currentState.testForNextState();
+    var base, base1;
+    if (typeof (base = this.currentState).onExit === "function") {
+      base.onExit();
+    }
+    this.currentState = this.currentState.testForNextState();
+    return typeof (base1 = this.currentState).onEnter === "function" ? base1.onEnter() : void 0;
   };
 
   StateMachine.prototype.executeCurrentState = function() {
@@ -16,15 +25,18 @@ StateMachine = (function() {
     return this.selectNextState();
   };
 
+  StateMachine.prototype.reset = function() {
+    return this.currentState = this.stateList[0];
+  };
+
   return StateMachine;
 
 })();
 
 State = (function() {
-  function State(id, name, enteringConditions, executeFunction, actionList) {
+  function State(id, name, executeFunction, actionList) {
     this.id = id;
     this.name = name;
-    this.enteringConditions = enteringConditions;
     this.executeFunction = executeFunction;
     this.actionList = actionList;
   }
@@ -43,11 +55,16 @@ State = (function() {
         return action.nextState;
       }
     }
+    return this;
   };
 
   State.prototype.execute = function() {
     return this.executeFunction();
   };
+
+  State.prototype.onEnter = null;
+
+  State.prototype.onExit = null;
 
   return State;
 
